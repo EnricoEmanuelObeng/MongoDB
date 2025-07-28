@@ -135,6 +135,17 @@ preventing unintended schema changes or improper data types
 
 
 ## Embedding
+ 
+Embedded documents in MongoDB are a powerful feature that allows you to nest documents 
+within other documents. Essentially representing relationships between data.
+
+```JSON
+db.academy.insertOne({
+  name: 'David',
+  course: 'Data Engineering',
+  trainer: {name: 'Luke', expertise: 'Data'}
+})
+```
 
 ## Referencing
 
