@@ -147,6 +147,4 @@ db.academy.insertOne({
 })
 ```
 
-## Referencing
-
 
