@@ -152,4 +152,214 @@ db.academy.insertOne({
 })
 ```
 
+## Useful lines
+
+Update a document value
+```JSON
+db.action.updateOne(
+   { name: "John Wick" },
+   { $set: { year: 2014 } }
+)
+```
+
+Deleted value
+```JSON
+db.action.deleteOne({name: "John Wick 3"})
+```
+
+Show general information
+```JSON
+db.characters.find({name:"Luke Skywalker"})
+```
+
+Show particular info
+````JSON
+db.characters.find({name:"Chewbacca"}, {name:1, eye_color: 1})
+````
+
+Don't show ID (get shown by default)
+````JSON
+db.characters.find({name:"Chewbacca"}, {_id:0, name:1, eye_color: 1})
+````
+
+Get a sub document info
+````JSON
+db.characters.find({name:"Ackbar"}, {_id:0, name:1, "species.name": 1}) 
+````
+
+**in** inside array
+````JSON
+db.characters.find(
+  {
+    eye_color:{
+      $in:["yellow","orange"]
+    }
+  },
+  {
+    name: 1
+  }
+)
+````
+
+**and** filter
+````JSON
+db.characters.find(
+  {
+    $and: [{gender:"female"}, {eye_color:"blue"}]
+  },
+  {
+    name: 1,
+    eye_color: 1,
+    gender:1
+  }
+)
+````
+
+**or** filter
+````JSON
+db.characters.find(
+  {
+    $or: [{gender:"male"}, {eye_color:"yellow"}]
+  },
+  {
+    name: 1
+  }
+)
+````
+
+Change data types when there are errors or null values
+````JSON
+- db.characters.updateMany(
+  {height: {$type: "string"}},
+  [
+    {
+      $set: {
+        height: { $convert: { input: "$height", to: "int", onError:null, onNull:null } }
+      }
+    }
+  ]
+)
+```` 
+
+Change data types and handle unknown values
+````JSON
+db.characters.updateMany(
+  { height: { $type: "string" } },
+  [
+    {
+      $set: {
+        height: {
+          $convert: {
+            input: "$height",
+            to: "int",
+            onError: "unkown",   
+            onNull: null        
+          }
+        }
+      }
+    }
+  ]
+)
+````
+
+Another way of changing data types
+````JSON
+db.characters.updateMany(
+  {height: "unknown"},
+  {$unset: {height: ""}}
+)
+db.characters.updateMany(
+  {},
+  [{$set: {height: {$toInt: "$height"}}}]
+)
+````
+
+**eq** matching exact query
+````JSON
+db.characters.find({ hair_color: { $eq: "brown" } })
+````
+
+**gt** greater than
+````JSON
+db.inventory.find({ quantity: { $gt: 20 } }) 
+````
+
+**gte** greater or equal
+````JSON
+db.drones.find({ price: { $gte: 60000 } }).pretty()
+````
+
+**lt** less than
+````JSON
+db.characters.find( { height: { $lt: 100 } } )
+````
+
+**lte** less or equal than
+````JSON
+db.characters.find( { height: { $lte: 100 } } ) 
+````
+
+**ne** not equal to
+````JSON
+- db.characters.find({ height: { $ne: 200 } })
+````
+
+**nin** not equal to array
+````JSON
+- db.characters.find({ eye_color: { $nin: ['brown', 'blue'] } }, { _id: 0, name:1, eye_color:1 }) 
+````
+
+Change mass to double
+````JSON
+# Remove commas
+- db.characters.update(
+  {mass: "1,358"},
+  {$set: {mass: "1358"}}
+)
+
+# Handle unknown
+db.characters.update(
+  {mass: "unknown"},
+  {$unset: {mass: ""}},
+  {multi: true}
+)
+
+# Cast into double
+db.characters.update(
+  {mass: {$exists: true}},
+  [{$set: {mass: {$toDouble: "$mass"}}}],
+  {multi: true}
+)
+````
+
+Get all the fields
+````JSON
+db.characters.distinct('species.name')
+````
+
+Count
+````JSON
+db.characters.countDocuments({'species.name': 'Human'}) = 
+````
+
+Aggregate
+````JSON 
+db.characters.aggregate( [
+  {$group: {_id:'$homeworld.name', max: {$max:'$height'}}}
+]) = 
+
+# Better version of aggregate
+db.characters.aggregate([
+  {
+    $group: {
+      _id: "$species.name",
+      avg: {$avg: "$mass"},
+      count: {$sum: 1}
+    }
+  }, {
+    $match: {avg:{$ne:null}}
+  },
+  {$sort: {avg:1}}
+]).toArray() = Find the average mass and count per species. Filter out null values and sort by average mass ascending.
+````
 
