@@ -4,7 +4,7 @@ MongoDB is a document-oriented NoSQL database designed for storing and managing 
 semi-structured data using a flexible schema design.
 
 
-![image1](images/image1.jpg)
+![image1](/images/image1.jpg)
 
 
 <br>
@@ -66,7 +66,7 @@ to larger storage requirements
 the cost associated with running and maintaining a MongoDB cluster can be significant. 
 
 
-![image2](images/image2.jpg)
+![image2](/images/image2.jpg)
 
 
 ### Sharding
@@ -93,7 +93,7 @@ might lead to corrupting the complete cluster.
 - **Immutable Shard key:** Neither the shard-key can be changed nor the field values can be updated.
 
 
-![image3](images/image3.jpg)
+![image3](/images/image3.jpg)
 
 
 ## Use Cases
